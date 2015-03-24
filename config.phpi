@@ -1,0 +1,27 @@
+<?php
+// Helper Library for Slack and Footprints, based off Footprints API and examples from https://github.com/ConnorVG/PHP-Slack
+// Created 2014_08_18 by mzocher
+// CONFIG FILE: Make sure to add your definitions below!
+
+// SLACK Tokens, create them by doing the following:
+// 1. Visit https://api.slack.com/applications and log in
+// 2. 
+define("SLACK_TOKEN", "**REPLACE WITH TOKEN**");
+
+// Define common rooms to speed up message sending
+define("SLACK_CHANNEL_FEED", "**REPLACE WITH CHANNEL CODE**");
+define("SLACK_CHANNEL_GENERAL", "**REPLACE WITH CHANNEL CODE**");
+
+// Define your email domain name for Slack users
+// (This assumes you have the same usernames for both Footprints and Slack, with your email domain added at the end)
+define("EMAIL_DOMAIN", "example.com");
+
+// Define your Footprints information below
+define("FOOTPRINTS_URL", "**URL for Footprints API**");
+define("FOOTPRINTS_USERNAME", "**Username with Footprints API access**");
+define("FOOTPRINTS_PASSWORD", "**Password for username above**");
+define("FOOTPRINTS_PROJECT", "**Number of your project/workspace**");
+
+// A public location for the Footprints Icon, please change to point to your own icon
+define("FOOTPRINTS_ICON", "http://mark.zocher.us/img/fpicon.png")
+

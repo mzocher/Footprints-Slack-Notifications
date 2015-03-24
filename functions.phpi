@@ -1,0 +1,102 @@
+<?php
+// Helper Library for Slack and Footprints, based off Footprints API and examples from https://github.com/ConnorVG/PHP-Slack
+// Created 2014_08_18 by mzocher
+
+// Examples include:
+//$user = getSlackUser("mzocher@sandiego.edu");
+//$room = getSlackChannel("general");
+//$results = sendSlackMsg("Test message from API!!", $room->id);
+
+function getSlackUser($search, $searchby="email")
+{
+	$users_raw = SlackData("users.list", NULL);
+	if($searchby=="email")
+	foreach($users_raw->members as $item)
+	{
+		if($item->profile->email == $search) return $item;
+	}
+	//If we get here, we didn't find the person
+	return FALSE;
+}
+function getSlackUsers($searchby="usernames", $data=NULL)
+{
+        $users_raw = SlackData("users.list", NULL);
+	$results = array();
+        if($searchby=="email" || $searchby=="usernames")
+        foreach($users_raw->members as $item)
+        {
+                if($searchby=="email")
+		{
+			if($data=="FULL") $results[$item->profile->email] = $item->id;
+			else $results[] = $item->profile->email;
+		}
+		else if($searchby=="usernames")
+		{
+			$exploder = explode("@" . EMAIL_DOMAIN, $item->profile->email);
+			if($data=="FULL") $results[$exploder[0]] = $item->id;
+			else $results[] = $exploder[0];
+		}
+        }
+	return $results;
+}
+
+function getSlackChannel($search)
+{
+        $rooms_raw = SlackData("channels.list", NULL);
+        foreach($rooms_raw->channels as $item)
+        {
+                if($item->name == $search) return $item;
+        }
+
+}
+function SlackData($url, $params)
+{
+	//Log in to Slack!
+	$ch = curl_init();
+	curl_setopt($ch, CURLOPT_URL, "https://slack.com/api/$url");
+	curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+	$fields_string = NULL;
+	$fields = array('token' => urlencode(SLACK_TOKEN));
+	
+	if(!empty($params)) 
+	{
+		$param_keys = array_keys($params);
+		foreach($param_keys as $key) $fields[$key] = urlencode($params[$key]);
+	}
+	foreach($fields as $key=>$value) { $fields_string .= $key.'='.$value.'&'; }
+	rtrim($fields_string, '&');
+	curl_setopt($ch,CURLOPT_POST, count($fields));
+	curl_setopt($ch,CURLOPT_POSTFIELDS, $fields_string);
+	$result = curl_exec($ch);
+	return json_decode($result);
+}
+
+function sendSlackMsg($message, $id, $extraparams=NULL)
+{
+	if($extraparams!=NULL) $params = $extraparams;
+	else $params = array();
+	$params['channel'] = $id;
+	$params['text'] = $message;
+	if(!isset($params['from'])) $params['from']="Footprints";
+	$results = SlackData("chat.postMessage", $params);
+	if($results->ok==1) return TRUE;
+	else return FALSE;
+}
+
+function fpSearch($query)
+{
+try {
+	$client = new SoapClient(NULL,
+                  array(
+                        "location"=>FOOTPRINTS_URL,
+                        "uri"=>"MRWebServices",
+                        "style"=>SOAP_RPC,
+                        "use" => SOAP_ENCODED
+                  ));
+        return $client->MRWebServices__search(FOOTPRINTS_USERNAME, FOOTPRINTS_PASSWORD,'',$query);
+    }
+catch (SoapFault $exception){
+	if($debug) echo "Problem with query: " . $query . "\n\n" . SoapError($exception);
+        return false;
+    }
+}
