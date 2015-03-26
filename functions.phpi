@@ -100,3 +100,63 @@ catch (SoapFault $exception){
         return false;
     }
 }
+
+function cleanData($data)
+{
+// Clean Data - Takes a string and removes Footprints specific formatting
+// Returns string of cleaned data
+// updated 2015-03-26 with full list from https://communities.bmc.com/docs/DOC-26022
+// THANKS David! https://communities.bmc.com/people/bb0875
+
+		if(substr($data, "__")===FALSE && substr($data, "&")===FALSE) return $data;
+		else
+		{
+			// Replace Footprints special characters with regular characters
+			$data = str_replace("__b", " ", $data);
+			$data = str_replace("__a", "'", $data);
+			$data = str_replace("__q", '"', $data);
+			$data = str_replace("__t", "`", $data);
+			$data = str_replace("__m", "@", $data);
+			$data = str_replace("__d", ".", $data);
+			$data = str_replace("__u", "-", $data);
+			$data = str_replace("__s", ";", $data);
+			$data = str_replace("__c", ":", $data);
+			$data = str_replace("__p", ")", $data);
+			$data = str_replace("__P", "(", $data);
+        	$data = str_replace("__3", "#", $data);
+        	$data = str_replace("__4", "$", $data);
+        	$data = str_replace("__5", "%", $data);
+        	$data = str_replace("__6", "^", $data);
+        	$data = str_replace("__7", "&", $data);
+        	$data = str_replace("__8", "*", $data);
+        	$data = str_replace("__0", "~", $data);
+        	$data = str_replace("__f", "/", $data);
+        	$data = str_replace("__F", "\\", $data);
+        	$data = str_replace("__Q", "?", $data);
+        	$data = str_replace("__e", "]", $data);
+        	$data = str_replace("__E", "[", $data);
+        	$data = str_replace("__g", ">", $data);
+        	$data = str_replace("__G", "<", $data);
+        	$data = str_replace("__b", "!", $data);
+        	$data = str_replace("__W", "{", $data);
+        	$data = str_replace("__w", "}", $data);
+        	$data = str_replace("__C", "=", $data);
+        	$data = str_replace("__A", "+", $data);
+        	$data = str_replace("__I", "|", $data);
+        	$data = str_replace("__M", ",", $data);
+        	
+        	// Change some HTML codes to regular characters
+        	$data = str_replace("&#34;", '"', $data);
+			$data = str_replace("&#60;", "<", $data);
+        	$data = str_replace("&#62;", ">", $data);
+        	$data = str_replace("&#39;", "'", $data);
+        	$data = str_replace("&#96;", "`", $data);
+        	$data = str_replace("&#58;", ":", $data);
+        	$data = str_replace("&#92;", "\\", $data);
+        	
+        	// Get rid of any weird underscores at the beginning and end of the data
+        	if(substr($data, 0, 1)=='_') $data = substr($data, 1);
+        	if(substr($data, -1)=='_') $data = substr($data, 0, -1);
+        }
+        return $data;
+}

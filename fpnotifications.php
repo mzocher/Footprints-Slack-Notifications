@@ -15,7 +15,7 @@ $users = getSlackUsers("usernames", "FULL");
 // Extra parameters for each Slack message
 $extraparams = array("username" => "Footprints", "icon_url" => FOOTPRINTS_ICON);
 
-// Get our tickets we should ignore
+// Get our tickets we should ignore - this is to keep from sending multiple notifications in case the time on the server is in the "future"
 $oldIgnores = unserialize(file_get_contents('slack_notifications.bin'));
 $newIgnores = array();
 if(isset($oldIgnores['fieldchange'])) foreach($oldIgnores['fieldchange'] as $key => $item) if($item >=time()) $newIgnores['fieldchange'][$key] = $item;
