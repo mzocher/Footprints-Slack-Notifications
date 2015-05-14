@@ -108,7 +108,7 @@ function cleanData($data)
 // updated 2015-03-26 with full list from https://communities.bmc.com/docs/DOC-26022
 // THANKS David! https://communities.bmc.com/people/bb0875
 
-		if(substr($data, "__")===FALSE && substr($data, "&")===FALSE) return $data;
+		if(substr($data, "_")===FALSE && substr($data, "&")===FALSE) return $data;
 		else
 		{
 			// Replace Footprints special characters with regular characters
